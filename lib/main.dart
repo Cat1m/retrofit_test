@@ -4,7 +4,6 @@ import 'package:retrofit_test/Api/api_key_generator.dart';
 import 'package:retrofit_test/Api/login_api.dart';
 
 import 'Model/login_response.dart';
-import 'dart:convert';
 
 void main() {
   final dio = Dio();
@@ -41,12 +40,11 @@ class MyApp extends StatelessWidget {
             } else if (snapshot.hasData) {
               final loginResponse = snapshot.data!;
               print('loginResponse: $loginResponse');
-              final jsonData = json.decode(loginResponse.Data);
-              print('jsonData: $jsonData');
-              final username = jsonData['username'];
-              final appver = jsonData['appver'];
-              final token = jsonData['token'];
-              final deviceid = jsonData['deviceid'];
+
+              final username = loginResponse.data.username;
+              final appver = loginResponse.data.appver;
+              final token = loginResponse.data.token;
+              final deviceid = loginResponse.data.deviceid;
 
               return ListView(
                 children: [
@@ -55,7 +53,7 @@ class MyApp extends StatelessWidget {
                   ),
                   ListTile(
                     title:
-                        Text('Đăng nhập thành công: ${loginResponse.Status}'),
+                        Text('Đăng nhập thành công: ${loginResponse.status}'),
                   ),
                   ListTile(
                     title: Text('Username: $username'),
@@ -86,7 +84,8 @@ class MyApp extends StatelessWidget {
     try {
       final loginApi = LoginApi(dio);
       final token = ApiKeyGenerator.getAPIKey();
-      final response = await loginApi.login('84123456', 'abc@123456', token);
+      final response =
+          await loginApi.login('84123456', 'abc@123456', 'chien', token);
 
       return response;
     } catch (e) {

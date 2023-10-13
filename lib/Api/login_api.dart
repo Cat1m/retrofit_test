@@ -10,6 +10,11 @@ abstract class LoginApi {
 
   @POST("/dkkb/login")
   @FormUrlEncoded()
-  Future<LoginResponse> login(@Field("username") String username,
-      @Field("password") String password, @Header("token") String token);
+  @POST("/login")
+  Future<LoginResponse> login(
+    @Field("username") String username,
+    @Field("password") String password,
+    @Field("deviceid") String deviceid,
+    @Header("token") String token,
+  );
 }

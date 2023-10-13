@@ -24,6 +24,7 @@ class _LoginApi implements LoginApi {
   Future<LoginResponse> login(
     String username,
     String password,
+    String deviceid,
     String token,
   ) async {
     const _extra = <String, dynamic>{};
@@ -33,6 +34,7 @@ class _LoginApi implements LoginApi {
     final _data = {
       'username': username,
       'password': password,
+      'deviceid': deviceid,
     };
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<LoginResponse>(Options(
