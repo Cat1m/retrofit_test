@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
             } else if (snapshot.hasData) {
               final loginResponse = snapshot.data!;
               print('loginResponse: $loginResponse');
+              print('data: ${loginResponse.data}');
 
               final username = loginResponse.data.username;
               final appver = loginResponse.data.appver;
