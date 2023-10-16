@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:retrofit_test/Model/data.dart';
+import 'package:retrofit_test/Model/LoginResponse/data.dart';
 
 part 'login_response.g.dart';
 

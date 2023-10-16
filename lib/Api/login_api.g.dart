@@ -58,6 +58,42 @@ class _LoginApi implements LoginApi {
     return value;
   }
 
+  @override
+  Future<QuocgiaResponse> getListQuocGia(
+    String encrypt,
+    String allStatus,
+    String userToken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': userToken};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {
+      'encrypt': encrypt,
+      'allStatus': allStatus,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<QuocgiaResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/quocgia/GetListQuocGia',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = QuocgiaResponse.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||
