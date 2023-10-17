@@ -200,6 +200,40 @@ class _LoginApi implements LoginApi {
     return value;
   }
 
+  @override
+  Future<DanTocResponse> getListDanToc(
+    String encrypt,
+    String allStatus,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'encrypt': encrypt,
+      'allStatus': allStatus,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<DanTocResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dantoc/GetListDanToc',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = DanTocResponse.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

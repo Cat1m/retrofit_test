@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit_test/Api/login_api.dart';
 import 'package:retrofit_test/Model/LoginResponse/login_response.dart';
+import 'package:retrofit_test/Model/dantoc_response.dart/dantoc_response.dart';
 import 'package:retrofit_test/Model/huyenthi_response.dart/huyenthi_response.dart';
 import 'package:retrofit_test/Model/phuongxa_response.dart/phuongxa_response.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/quocgia_response.dart';
@@ -60,6 +61,15 @@ class ApiProvider with ChangeNotifier {
   Future<PhuongXaResponse> getListPhuongXa(String ma) async {
     try {
       final response = await loginApi.getListPhuongXa(ma, 'false', 'false');
+      return response;
+    } catch (e) {
+      throw Exception('Lỗi khi lấy danh sách quốc gia: $e');
+    }
+  }
+
+  Future<DanTocResponse> getListDanToc() async {
+    try {
+      final response = await loginApi.getListDanToc('false', 'false');
       return response;
     } catch (e) {
       throw Exception('Lỗi khi lấy danh sách quốc gia: $e');

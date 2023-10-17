@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 import 'package:retrofit_test/Api/api_key_generator.dart';
 import 'package:retrofit_test/Api/api_provider.dart';
+import 'package:retrofit_test/Model/dantoc_response.dart/data_dantoc.dart';
 import 'package:retrofit_test/Model/huyenthi_response.dart/data_huyenthi.dart';
 import 'package:retrofit_test/Model/phuongxa_response.dart/data_phuongxa.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/data_quocgia.dart';
 import 'package:retrofit_test/Model/tinhthanh_response.dart/data_tinhthanh.dart';
-import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -25,21 +24,24 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedMaHT = "";
   String selectedPhuongXa = "";
   String selectedMaPX = "";
+  String selectedDanToc = "";
+  String selectedMaDT = "";
   List<DataQuocGia> quocgia = [];
   List<DataTinhThanh> tinhthanh = [];
   List<DataHuyenThi> huyenthi = [];
   List<DataPhuongXa> phuongxa = [];
+  List<DataDanToc> dantoc = [];
 
   bool dataLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    fetchData(); // Gọi phương thức để tải dữ liệu khi màn hình được khởi tạo.
+    fetchData();
   }
 
-  void fetchData() async {
-    final apiProvider = Provider.of<ApiProvider>(context, listen: false);
+  Future<void> fetchData() async {
+    final apiProvider = getApiProvider(context);
 
     try {
       final loginResponse = await apiProvider.login(
@@ -53,71 +55,92 @@ class _HomeScreenState extends State<HomeScreen> {
       print(userToken);
       final quocGiaResponse = await apiProvider.getListQuocGia();
 
-      // Cập nhật quocgia và selectedQuocGia
       setState(() {
         selectedQuocGia = '';
         selectedMaQG = '';
+        selectedTinhThanh = "";
+        selectedMaTT = "";
+        selectedHuyenThi = "";
+        selectedMaHT = "";
+        selectedPhuongXa = "";
+        selectedMaPX = "";
+        selectedDanToc = "";
+        selectedMaDT = "";
         quocgia = quocGiaResponse.data;
       });
 
-      // Gọi phương thức để tải danh sách tỉnh thành
       fetchTinhThanhData();
       fetchHuyenThiData();
       fetchPhuongXaData();
+      fetchDanTocData();
     } catch (error) {
       print('Lỗi khi tải dữ liệu: $error');
     }
   }
 
-  void fetchTinhThanhData() async {
-    final apiProvider = Provider.of<ApiProvider>(context, listen: false);
+  Future<void> fetchTinhThanhData() async {
+    final apiProvider = getApiProvider(context);
 
     try {
       final tinhThanhResponse =
           await apiProvider.getListTinhThanh(selectedMaQG);
 
-      // Cập nhật tinhthanh và selectedTinhThanh
       setState(() {
         selectedTinhThanh = '';
         selectedMaTT = '';
         tinhthanh = tinhThanhResponse.data;
-        dataLoaded = true; // Đã tải xong dữ liệu
+        dataLoaded = true;
       });
     } catch (error) {
       print('Lỗi khi tải dữ liệu tỉnh thành: $error');
     }
   }
 
-  void fetchHuyenThiData() async {
-    final apiProvider = Provider.of<ApiProvider>(context, listen: false);
+  Future<void> fetchHuyenThiData() async {
+    final apiProvider = getApiProvider(context);
 
     try {
       final huyenThiResponse = await apiProvider.getListHuyenThi(selectedMaTT);
 
-      // Cập nhật tinhthanh và selectedTinhThanh
       setState(() {
         selectedHuyenThi = '';
         selectedMaHT = '';
         huyenthi = huyenThiResponse.data;
-        dataLoaded = true; // Đã tải xong dữ liệu
+        dataLoaded = true;
       });
     } catch (error) {
       print('Lỗi khi tải dữ liệu tỉnh thành: $error');
     }
   }
 
-  void fetchPhuongXaData() async {
-    final apiProvider = Provider.of<ApiProvider>(context, listen: false);
+  Future<void> fetchPhuongXaData() async {
+    final apiProvider = getApiProvider(context);
 
     try {
       final phuongXaResponse = await apiProvider.getListPhuongXa(selectedMaTT);
 
-      // Cập nhật tinhthanh và selectedTinhThanh
       setState(() {
         selectedPhuongXa = '';
         selectedMaPX = '';
         phuongxa = phuongXaResponse.data;
-        dataLoaded = true; // Đã tải xong dữ liệu
+        dataLoaded = true;
+      });
+    } catch (error) {
+      print('Lỗi khi tải dữ liệu tỉnh thành: $error');
+    }
+  }
+
+  Future<void> fetchDanTocData() async {
+    final apiProvider = getApiProvider(context);
+
+    try {
+      final danTocResponse = await apiProvider.getListDanToc();
+
+      setState(() {
+        selectedDanToc = '';
+        selectedMaDT = '';
+        dantoc = danTocResponse.data;
+        dataLoaded = true;
       });
     } catch (error) {
       print('Lỗi khi tải dữ liệu tỉnh thành: $error');
@@ -142,9 +165,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListView(
       children: [
         ElevatedButton(
-          onPressed: () {
-            _showCountryDialog(context, quocgia);
-          },
+          onPressed: () => _showDialog(
+              context, "Select a Country", quocgia, updateSelectedQuocGia),
           child: Row(
             children: [
               Text(selectedQuocGia),
@@ -153,9 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            _showTinhThanhDialog(context, tinhthanh);
-          },
+          onPressed: () => _showDialog(context, "Select a Province/City",
+              tinhthanh, updateSelectedTinhThanh),
           child: Row(
             children: [
               Text(selectedTinhThanh),
@@ -164,9 +185,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            _showHuyenThiDialog(context, huyenthi);
-          },
+          onPressed: () => _showDialog(context, "Select a Province/City",
+              huyenthi, updateSelectedHuyenThi),
           child: Row(
             children: [
               Text(selectedHuyenThi),
@@ -175,12 +195,21 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () {
-            _showPhuongXaDialog(context, phuongxa);
-          },
+          onPressed: () => _showDialog(context, "Select a Province/City",
+              phuongxa, updateSelectedPhuongXa),
           child: Row(
             children: [
               Text(selectedPhuongXa),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => _showDialog(
+              context, "Select Dân Tộc", dantoc, updateSelectedDanToc),
+          child: Row(
+            children: [
+              Text(selectedDanToc),
               const Icon(Icons.arrow_drop_down),
             ],
           ),
@@ -189,24 +218,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showCountryDialog(BuildContext context, List<DataQuocGia> countries) {
+  void _showDialog(
+      BuildContext context, String title, List items, Function updateFunction) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Select a Country"),
+          title: Text(title),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: countries.map((country) {
+              children: items.map((item) {
                 return ListTile(
-                  title: Text(country.ten),
+                  title: Text(item.ten),
                   onTap: () {
-                    setState(() {
-                      selectedQuocGia = country.ten;
-                      selectedMaQG = country.ma;
-                      fetchTinhThanhData();
-                    });
+                    updateFunction(item.ten, item.ma);
                     Navigator.of(context).pop();
                   },
                 );
@@ -218,90 +244,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void _showTinhThanhDialog(
-      BuildContext context, List<DataTinhThanh> provinces) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Select a Province/City"),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: provinces.map((province) {
-                return ListTile(
-                  title: Text(province.ten),
-                  onTap: () {
-                    setState(() {
-                      selectedTinhThanh = province.ten;
-                      selectedMaTT = province.ma;
-                      fetchHuyenThiData();
-                    });
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    );
+  void updateSelectedQuocGia(String name, String code) {
+    setState(() {
+      selectedQuocGia = name;
+      selectedMaQG = code;
+      fetchTinhThanhData();
+    });
   }
 
-  void _showHuyenThiDialog(BuildContext context, List<DataHuyenThi> provinces) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Select a Province/City"),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: provinces.map((province) {
-                return ListTile(
-                  title: Text(province.ten),
-                  onTap: () {
-                    setState(() {
-                      selectedHuyenThi = province.ten;
-                      selectedMaHT = province.ma;
-                      fetchPhuongXaData();
-                    });
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    );
+  void updateSelectedTinhThanh(String name, String code) {
+    setState(() {
+      selectedTinhThanh = name;
+      selectedMaTT = code;
+      fetchHuyenThiData();
+    });
   }
 
-  void _showPhuongXaDialog(BuildContext context, List<DataPhuongXa> provinces) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Select a Province/City"),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: provinces.map((province) {
-                return ListTile(
-                  title: Text(province.ten),
-                  onTap: () {
-                    setState(() {
-                      selectedPhuongXa = province.ten;
-                      selectedMaPX = province.ma;
-                    });
-                    Navigator.of(context).pop();
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    );
+  void updateSelectedHuyenThi(String name, String code) {
+    setState(() {
+      selectedHuyenThi = name;
+      selectedMaHT = code;
+      fetchPhuongXaData();
+    });
   }
+
+  void updateSelectedPhuongXa(String name, String code) {
+    setState(() {
+      selectedPhuongXa = name;
+      selectedMaPX = code;
+    });
+  }
+
+  void updateSelectedDanToc(String name, String code) {
+    setState(() {
+      selectedDanToc = name;
+      selectedMaDT = code;
+    });
+  }
+}
+
+ApiProvider getApiProvider(BuildContext context) {
+  return Provider.of<ApiProvider>(context, listen: false);
 }
