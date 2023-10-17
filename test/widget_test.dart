@@ -1,33 +1,25 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 
+import 'package:flutter_test/flutter_test.dart';
+import 'package:retrofit_test/Api/api_service.dart';
 import 'package:retrofit_test/main.dart';
+// Import ApiService
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('Test your app functionality', (WidgetTester tester) async {
+    // Create an instance of ApiService for testing
+    final apiService = ApiService(Dio());
+
+    // Build your app and trigger a frame.
     await tester.pumpWidget(MyApp(
-      dio: Dio(),
+      apiService: apiService,
     ));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that the initial state of your app is as expected.
+    expect(find.text('Login Demo'), findsOneWidget);
+    expect(find.text('Đăng nhập thất bại:'), findsNothing);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // You can write more test cases here to interact with your app's widgets.
+    // For example, simulate button taps, text input, and verify expected outcomes.
   });
 }
