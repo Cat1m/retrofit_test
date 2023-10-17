@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retrofit_test/Api/api_key_generator.dart';
 import 'package:retrofit_test/Api/api_provider.dart';
-import 'package:retrofit_test/Model/LoginResponse/login_response.dart';
-import 'package:retrofit_test/Model/quocgia_response.dart/quocgia_response.dart';
-// Import ApiProvider
+import 'package:retrofit_test/Model/quocgia_response.dart/data_quocgia.dart';
+import 'package:retrofit_test/Model/tinhthanh_response.dart/data_tinhthanh.dart';
+import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 
 void main() {
   runApp(
@@ -30,103 +30,163 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  String selectedQuocGia = "";
+  String selectedMaQG = "";
+  String selectedTinhThanh = "";
+  String selectedMaTT = "";
+  List<DataQuocGia> quocgia = []; // Define quocgia variable
+  List<DataTinhThanh> tinhthanh = []; // Define tinhthanh variable
+
+  bool dataLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
     final apiProvider = Provider.of<ApiProvider>(context, listen: false);
 
+    try {
+      final loginResponse = await apiProvider.login(
+          '84123456', 'abc@123456', 'chien', ApiKeyGenerator.getAPIKey());
+      final userToken = loginResponse.data.token;
+
+      final quocGiaResponse = await apiProvider.getListQuocGia(userToken);
+
+      setState(() {
+        selectedQuocGia = '';
+        quocgia = quocGiaResponse.data;
+        dataLoaded = true;
+      });
+    } catch (error) {
+      print('Lỗi khi tải dữ liệu: $error');
+    }
+  }
+
+  Future<void> fetchTinhThanhData(String userToken) async {
+    final apiProvider = Provider.of<ApiProvider>(context, listen: false);
+    try {
+      final tinhThanhResponse =
+          await apiProvider.getListTinhThanh(selectedMaQG, userToken);
+
+      setState(() {
+        selectedTinhThanh = '';
+        selectedMaTT = '';
+        tinhthanh = tinhThanhResponse.data;
+      });
+    } catch (error) {
+      print('Lỗi khi tải dữ liệu tỉnh thành: $error');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Demo'),
       ),
-      body: FutureBuilder<LoginResponse>(
-        future: apiProvider.login(
-            '84123456', 'abc@123456', 'chien', ApiKeyGenerator.getAPIKey()),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+      body: dataLoaded
+          ? buildMainContent()
+          : const Center(
               child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Đăng nhập thất bại: ${snapshot.error}'),
-            );
-          } else if (snapshot.hasData) {
-            final loginResponse = snapshot.data!;
-            final username = loginResponse.data.username;
-            final appver = loginResponse.data.appver;
-            final userToken = loginResponse.data.token;
-            final deviceid = loginResponse.data.deviceid;
+            ),
+    );
+  }
 
-            return FutureBuilder<QuocgiaResponse>(
-              future: apiProvider.getListQuocGia(userToken),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                        'Lỗi khi lấy danh sách quốc gia: ${snapshot.error}'),
-                  );
-                } else if (snapshot.hasData) {
-                  final quocGiaResponse = snapshot.data!;
-                  final quocgia = quocGiaResponse.data;
-                  print(quocgia);
-                  return ListView(
-                    children: [
-                      ListTile(
-                        title: Text('Data: $loginResponse'),
-                      ),
-                      ListTile(
-                        title: Text(
-                            'Đăng nhập thành công: ${loginResponse.status}'),
-                      ),
-                      ListTile(
-                        title: Text('Username: $username'),
-                      ),
-                      ListTile(
-                        title: Text('Appver: $appver'),
-                      ),
-                      ListTile(
-                        title: Text('Token: $userToken'),
-                      ),
-                      ListTile(
-                        title: Text('Device ID: $deviceid'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Xử lý sự kiện khi người dùng ấn vào nút
-                          // ...
-                        },
-                        child: const Row(
-                          children: [
-                            Text(
-                                'selectedQuocGia'), // Thay thế bằng selectedQuocGia từ dialog
-                            Icon(Icons
-                                .arrow_drop_down), // Biểu tượng mũi tên xuống
-                          ],
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  return const Center(
-                    child: Text('Không có dữ liệu quốc gia.'),
-                  );
-                }
-              },
-            );
-          } else {
-            return const Center(
-              child: Text('Không có dữ liệu.'),
-            );
-          }
-        },
-      ),
+  Widget buildMainContent() {
+    return ListView(
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            _showCountryDialog(context, quocgia);
+          },
+          child: Row(
+            children: [
+              Text(selectedQuocGia),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            _showTinhThanhDialog(context, tinhthanh);
+          },
+          child: Row(
+            children: [
+              Text(selectedTinhThanh),
+              const Icon(Icons.arrow_drop_down),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showCountryDialog(BuildContext context, List<DataQuocGia> countries) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Select a Country"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: countries.map((country) {
+                return ListTile(
+                  title: Text(country.ten),
+                  onTap: () {
+                    setState(() {
+                      selectedQuocGia = country.ten;
+                      selectedMaQG = country.ma;
+                      fetchTinhThanhData(selectedMaQG);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showTinhThanhDialog(
+      BuildContext context, List<DataTinhThanh> provinces) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Select a Province/City"),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: provinces.map((province) {
+                return ListTile(
+                  title: Text(province.ten),
+                  onTap: () {
+                    setState(() {
+                      selectedTinhThanh = province.ten;
+                      selectedMaTT = province.ma;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
     );
   }
 }

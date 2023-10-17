@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:retrofit_test/Api/login_api.dart';
 import 'package:retrofit_test/Model/LoginResponse/login_response.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/quocgia_response.dart';
+import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 
 class ApiProvider with ChangeNotifier {
   final Dio dio = Dio();
@@ -31,6 +32,17 @@ class ApiProvider with ChangeNotifier {
     try {
       final response =
           await loginApi.getListQuocGia('false', 'false', userToken);
+      return response;
+    } catch (e) {
+      throw Exception('Lỗi khi lấy danh sách quốc gia: $e');
+    }
+  }
+
+  Future<TinhThanhResponse> getListTinhThanh(
+      String ma, String userToken) async {
+    try {
+      final response =
+          await loginApi.getListTinhThanh(ma, 'false', 'false', userToken);
       return response;
     } catch (e) {
       throw Exception('Lỗi khi lấy danh sách quốc gia: $e');

@@ -94,6 +94,44 @@ class _LoginApi implements LoginApi {
     return value;
   }
 
+  @override
+  Future<TinhThanhResponse> getListTinhThanh(
+    String ma,
+    String encrypt,
+    String allStatus,
+    String userToken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': userToken};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {
+      'ID': ma,
+      'encrypt': encrypt,
+      'allStatus': allStatus,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<TinhThanhResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/tinhthanh/GetListTinhThanhByQuocGiaAPI',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = TinhThanhResponse.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

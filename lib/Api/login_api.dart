@@ -2,6 +2,7 @@ import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit_test/Model/LoginResponse/login_response.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/quocgia_response.dart';
+import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 
 part 'login_api.g.dart';
 
@@ -21,6 +22,15 @@ abstract class LoginApi {
   @POST("/quocgia/GetListQuocGia")
   @FormUrlEncoded()
   Future<QuocgiaResponse> getListQuocGia(
+    @Field("encrypt") String encrypt,
+    @Field("allStatus") String allStatus,
+    @Header("token") String userToken,
+  );
+
+  @POST("/tinhthanh/GetListTinhThanhByQuocGiaAPI")
+  @FormUrlEncoded()
+  Future<TinhThanhResponse> getListTinhThanh(
+    @Field("ID") String ma,
     @Field("encrypt") String encrypt,
     @Field("allStatus") String allStatus,
     @Header("token") String userToken,

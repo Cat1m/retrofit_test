@@ -1,12 +1,13 @@
 import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:retrofit_test/Model/quocgia_response.dart/data_quocgia.dart';
 
-part 'quocgia_response.g.dart';
+import 'package:retrofit_test/Model/tinhthanh_response.dart/data_tinhthanh.dart';
+
+part 'tinhthanh_response.g.dart';
 
 @JsonSerializable()
-class QuocgiaResponse {
+class TinhThanhResponse {
   @JsonKey(name: 'Status')
   final String status;
 
@@ -14,28 +15,28 @@ class QuocgiaResponse {
   final String message;
 
   @JsonKey(name: 'Data')
-  final List<DataQuocGia> data;
+  final List<DataTinhThanh> data;
 
-  QuocgiaResponse({
+  TinhThanhResponse({
     required this.status,
     required this.message,
     required this.data,
   });
 
-  factory QuocgiaResponse.fromJson(Map<String, dynamic> json) {
+  factory TinhThanhResponse.fromJson(Map<String, dynamic> json) {
     final dataJson = json['Data'];
     final List<dynamic> dataJsonList =
         jsonDecode(dataJson); // Phân tích chuỗi JSON
     final data =
-        dataJsonList.map((dataMap) => DataQuocGia.fromJson(dataMap)).toList();
-    return QuocgiaResponse(
+        dataJsonList.map((dataMap) => DataTinhThanh.fromJson(dataMap)).toList();
+    return TinhThanhResponse(
       status: json['Status'],
       message: json['Messenge'],
       data: data,
     );
   }
 
-  Map<String, dynamic> toJson() => _$QuocgiaResponseToJson(this);
+  Map<String, dynamic> toJson() => _$TinhThanhResponseToJson(this);
 
   @override
   String toString() {

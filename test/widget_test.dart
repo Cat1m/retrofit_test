@@ -1,7 +1,4 @@
-import 'package:dio/dio.dart';
-
 import 'package:flutter_test/flutter_test.dart';
-import 'package:retrofit_test/Api/api_provider.dart';
 import 'package:retrofit_test/main.dart';
 // Import ApiService
 
