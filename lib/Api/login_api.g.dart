@@ -62,12 +62,10 @@ class _LoginApi implements LoginApi {
   Future<QuocgiaResponse> getListQuocGia(
     String encrypt,
     String allStatus,
-    String userToken,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'token': userToken};
-    _headers.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = {
       'encrypt': encrypt,
       'allStatus': allStatus,
@@ -99,12 +97,10 @@ class _LoginApi implements LoginApi {
     String ma,
     String encrypt,
     String allStatus,
-    String userToken,
   ) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{r'token': userToken};
-    _headers.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
     final _data = {
       'ID': ma,
       'encrypt': encrypt,
@@ -129,6 +125,78 @@ class _LoginApi implements LoginApi {
               baseUrl,
             ))));
     final value = TinhThanhResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<HuyenThiResponse> getListHuyenThi(
+    String ma,
+    String encrypt,
+    String allStatus,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'ID': ma,
+      'encrypt': encrypt,
+      'allStatus': allStatus,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<HuyenThiResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/huyenthi/GetListHuyenThiByTinhThanhAPI',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = HuyenThiResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PhuongXaResponse> getListPhuongXa(
+    String ma,
+    String encrypt,
+    String allStatus,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'ID': ma,
+      'encrypt': encrypt,
+      'allStatus': allStatus,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<PhuongXaResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/phuongxa/GetListPhuongXaByHuyenThiAPI',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = PhuongXaResponse.fromJson(_result.data!);
     return value;
   }
 

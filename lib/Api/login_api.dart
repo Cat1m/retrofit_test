@@ -1,6 +1,8 @@
 import 'package:retrofit/retrofit.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit_test/Model/LoginResponse/login_response.dart';
+import 'package:retrofit_test/Model/huyenthi_response.dart/huyenthi_response.dart';
+import 'package:retrofit_test/Model/phuongxa_response.dart/phuongxa_response.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/quocgia_response.dart';
 import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 
@@ -24,7 +26,6 @@ abstract class LoginApi {
   Future<QuocgiaResponse> getListQuocGia(
     @Field("encrypt") String encrypt,
     @Field("allStatus") String allStatus,
-    @Header("token") String userToken,
   );
 
   @POST("/tinhthanh/GetListTinhThanhByQuocGiaAPI")
@@ -33,6 +34,21 @@ abstract class LoginApi {
     @Field("ID") String ma,
     @Field("encrypt") String encrypt,
     @Field("allStatus") String allStatus,
-    @Header("token") String userToken,
+  );
+
+  @POST("/huyenthi/GetListHuyenThiByTinhThanhAPI")
+  @FormUrlEncoded()
+  Future<HuyenThiResponse> getListHuyenThi(
+    @Field("ID") String ma,
+    @Field("encrypt") String encrypt,
+    @Field("allStatus") String allStatus,
+  );
+
+  @POST("/phuongxa/GetListPhuongXaByHuyenThiAPI")
+  @FormUrlEncoded()
+  Future<PhuongXaResponse> getListPhuongXa(
+    @Field("ID") String ma,
+    @Field("encrypt") String encrypt,
+    @Field("allStatus") String allStatus,
   );
 }
