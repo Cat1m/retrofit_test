@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -26,11 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
   String selectedMaPX = "";
   String selectedDanToc = "";
   String selectedMaDT = "";
-  List<DataQuocGia> quocgia = [];
-  List<DataTinhThanh> tinhthanh = [];
-  List<DataHuyenThi> huyenthi = [];
-  List<DataPhuongXa> phuongxa = [];
-  List<DataDanToc> dantoc = [];
+  List<DataQuocGia> quocGiaList = [];
+  List<DataTinhThanh> tinhThanhList = [];
+  List<DataHuyenThi> huyenThiList = [];
+  List<DataPhuongXa> phuongXaList = [];
+  List<DataDanToc> danTocList = [];
+  List<String> selectedInfoList = [];
 
   bool dataLoaded = false;
 
@@ -53,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       final userToken = loginResponse.data.token;
       print(userToken);
+
       final quocGiaResponse = await apiProvider.getListQuocGia();
 
       setState(() {
@@ -66,13 +68,13 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedMaPX = "";
         selectedDanToc = "";
         selectedMaDT = "";
-        quocgia = quocGiaResponse.data;
+        quocGiaList = quocGiaResponse.data;
       });
 
-      fetchTinhThanhData();
-      fetchHuyenThiData();
-      fetchPhuongXaData();
-      fetchDanTocData();
+      await fetchTinhThanhData();
+      await fetchHuyenThiData();
+      await fetchPhuongXaData();
+      await fetchDanTocData();
     } catch (error) {
       print('Lỗi khi tải dữ liệu: $error');
     }
@@ -88,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         selectedTinhThanh = '';
         selectedMaTT = '';
-        tinhthanh = tinhThanhResponse.data;
+        tinhThanhList = tinhThanhResponse.data;
         dataLoaded = true;
       });
     } catch (error) {
@@ -105,11 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         selectedHuyenThi = '';
         selectedMaHT = '';
-        huyenthi = huyenThiResponse.data;
+        huyenThiList = huyenThiResponse.data;
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu tỉnh thành: $error');
+      print('Lỗi khi tải dữ liệu quận huyện: $error');
     }
   }
 
@@ -122,11 +124,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         selectedPhuongXa = '';
         selectedMaPX = '';
-        phuongxa = phuongXaResponse.data;
+        phuongXaList = phuongXaResponse.data;
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu tỉnh thành: $error');
+      print('Lỗi khi tải dữ liệu phường xã: $error');
     }
   }
 
@@ -139,11 +141,11 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         selectedDanToc = '';
         selectedMaDT = '';
-        dantoc = danTocResponse.data;
+        danTocList = danTocResponse.data;
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu tỉnh thành: $error');
+      print('Lỗi khi tải dữ liệu dân tộc: $error');
     }
   }
 
@@ -151,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Demo'),
+        title: const Text('Ứng dụng đăng nhập'),
       ),
       body: dataLoaded
           ? buildMainContent()
@@ -166,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         ElevatedButton(
           onPressed: () => _showDialog(
-              context, "Select a Country", quocgia, updateSelectedQuocGia),
+              context, "Chọn một Quốc gia", quocGiaList, updateSelectedQuocGia),
           child: Row(
             children: [
               Text(selectedQuocGia),
@@ -175,8 +177,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () => _showDialog(context, "Select a Province/City",
-              tinhthanh, updateSelectedTinhThanh),
+          onPressed: () => _showDialog(context, "Chọn một Tỉnh/Thành phố",
+              tinhThanhList, updateSelectedTinhThanh),
           child: Row(
             children: [
               Text(selectedTinhThanh),
@@ -185,8 +187,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () => _showDialog(context, "Select a Province/City",
-              huyenthi, updateSelectedHuyenThi),
+          onPressed: () => _showDialog(context, "Chọn một Quận/Huyện",
+              huyenThiList, updateSelectedHuyenThi),
           child: Row(
             children: [
               Text(selectedHuyenThi),
@@ -195,8 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         ElevatedButton(
-          onPressed: () => _showDialog(context, "Select a Province/City",
-              phuongxa, updateSelectedPhuongXa),
+          onPressed: () => _showDialog(context, "Chọn một Phường/Xã",
+              phuongXaList, updateSelectedPhuongXa),
           child: Row(
             children: [
               Text(selectedPhuongXa),
@@ -206,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         ElevatedButton(
           onPressed: () => _showDialog(
-              context, "Select Dân Tộc", dantoc, updateSelectedDanToc),
+              context, "Chọn Dân tộc", danTocList, updateSelectedDanToc),
           child: Row(
             children: [
               Text(selectedDanToc),
@@ -214,6 +216,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+        ElevatedButton(
+          onPressed: () {
+            // Điều hướng đến màn hình kiểm tra thông tin
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => buildConfirmationScreen()));
+          },
+          child: const Text('Kiểm tra lại thông tin'),
+        )
       ],
     );
   }
@@ -249,6 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedQuocGia = name;
       selectedMaQG = code;
       fetchTinhThanhData();
+      selectedInfoList.add("Quốc gia: $name");
     });
   }
 
@@ -257,6 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedTinhThanh = name;
       selectedMaTT = code;
       fetchHuyenThiData();
+      selectedInfoList.add("Tỉnh Thành: $name");
     });
   }
 
@@ -265,6 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
       selectedHuyenThi = name;
       selectedMaHT = code;
       fetchPhuongXaData();
+      selectedInfoList.add("Huyện Thị: $name");
     });
   }
 
@@ -272,6 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       selectedPhuongXa = name;
       selectedMaPX = code;
+      selectedInfoList.add("Phường xã: $name");
     });
   }
 
@@ -279,7 +295,31 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       selectedDanToc = name;
       selectedMaDT = code;
+      selectedInfoList.add("Dân Tộc: $name");
     });
+  }
+
+  Widget buildConfirmationScreen() {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Xác nhận thông tin'),
+      ),
+      body: ListView(
+        children: [
+          for (final info in selectedInfoList)
+            ListTile(
+              title: Text(info),
+            ),
+          ElevatedButton(
+            onPressed: () {
+              // Xử lý khi người dùng xác nhận
+              // Điều này có thể bao gồm việc gửi thông tin đến máy chủ hoặc thực hiện hành động khác.
+            },
+            child: const Text('Xác nhận'),
+          ),
+        ],
+      ),
+    );
   }
 }
 
