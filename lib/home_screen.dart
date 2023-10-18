@@ -6,8 +6,8 @@ import 'package:retrofit_test/Model/dantoc_response.dart/data_dantoc.dart';
 import 'package:retrofit_test/Model/huyenthi_response.dart/data_huyenthi.dart';
 import 'package:retrofit_test/Model/phuongxa_response.dart/data_phuongxa.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/data_quocgia.dart';
-import 'package:retrofit_test/Model/register_response.dart/register_response.dart';
 import 'package:retrofit_test/Model/tinhthanh_response.dart/data_tinhthanh.dart';
+import 'package:retrofit_test/Model/userinfor_response.dart/data_userinfor.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? userToken;
   String selectedQuocGia = "";
   String selectedMaQG = "";
   String selectedTinhThanh = "";
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<DataPhuongXa> phuongXaList = [];
   List<DataDanToc> danTocList = [];
   List<String> selectedInfoList = [];
+  List<DataUserInfor> userInforList = [];
 
   bool dataLoaded = false;
 
@@ -53,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ApiKeyGenerator.getAPIKey(),
       );
 
-      final userToken = loginResponse.data.token;
+      userToken = loginResponse.data.token;
       print(userToken);
 
       final quocGiaResponse = await apiProvider.getListQuocGia();
@@ -150,6 +152,99 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> getOTP() async {
+    final apiProvider = getApiProvider(context);
+
+    try {
+      final otpResponse = await apiProvider.getOTP(userToken!);
+      if (otpResponse.status == "Success") {
+        final message = otpResponse.message;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+          ),
+        );
+      } else {
+        final errorMessage = otpResponse.message;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage!),
+          ),
+        );
+      }
+
+      setState(() {});
+    } catch (error) {
+      print('Lỗi khi xử lý OTP: $error');
+    }
+  }
+
+  Future<void> getResetPassword() async {
+    final apiProvider = getApiProvider(context);
+
+    try {
+      final resetPassword = await apiProvider.getResetPassword(
+        '0123456',
+        'abc@123456',
+        'abc@123456',
+        userToken!,
+      );
+      if (resetPassword.status == "Success") {
+        final message = resetPassword.message;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+          ),
+        );
+      } else {
+        final errorMessage = resetPassword.message;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage!),
+          ),
+        );
+      }
+    } catch (error) {
+      print('Lỗi khi tải dữ liệu dân tộc: $error');
+    }
+  }
+
+  Future<void> getForgotPassword() async {
+    final apiProvider = getApiProvider(context);
+
+    try {
+      final forgotPassword = await apiProvider.getForgotPassword(
+        '0123456',
+        'abc@1234',
+        '123456',
+        ApiKeyGenerator.getAPIKey(),
+      );
+      if (forgotPassword.status == "Success") {
+        final message = forgotPassword.message;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+          ),
+        );
+      } else {
+        final errorMessage = forgotPassword.message;
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage!),
+          ),
+        );
+      }
+    } catch (error) {
+      print('Lỗi khi tải dữ liệu dân tộc: $error');
+    }
+  }
+
   Future<void> registerNewAccount() async {
     final apiProvide = getApiProvider(context);
 
@@ -192,6 +287,67 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     } catch (error) {
       print('Lỗi khi đăng ký tài khoản: $error');
+    }
+  }
+
+  Future<void> fetchUserInfor() async {
+    final apiProvider = getApiProvider(context);
+
+    try {
+      print('token người dùng$userToken');
+      final userInforResponse = await apiProvider.getListUserInfor(userToken!);
+
+      setState(() {
+        userInforList = userInforResponse.data;
+      });
+      print('đây là trả về từ call api userinfo $userInforResponse');
+    } catch (error) {
+      print('Lỗi khi tải dữ liệu thông tin tài khoảng: $error');
+    }
+  }
+
+  Future<void> updateUserInfor() async {
+    final apiProvide = getApiProvider(context);
+    print("update: $userToken");
+
+    try {
+      final updateUserInfor = await apiProvide.updateUserInfor(
+          '841234567',
+          '...',
+          'Lê Minh Chiến',
+          '06/12/1997',
+          '1',
+          '190',
+          '1',
+          '1',
+          '1',
+          'Số 38,...',
+          '1',
+          'AFASKDJASDJSAK',
+          'ADSKJDSAADS;',
+          '...',
+          '1',
+          '1',
+          userToken!);
+      print(updateUserInfor.toJson()); // In ra toàn bộ response để xem lỗi.
+
+      if (updateUserInfor.status == "OK") {
+        final message = updateUserInfor.message;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+          ),
+        );
+      } else {
+        final errorMessage = updateUserInfor.message;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi cập nhật thông tin: $errorMessage'),
+          ),
+        );
+      }
+    } catch (error) {
+      print('Lỗi khi cập nhật tài khoảng: $error');
     }
   }
 
@@ -277,7 +433,62 @@ class _HomeScreenState extends State<HomeScreen> {
             registerNewAccount(); // Gọi hàm đăng ký khi nút được bấm.
           },
           child: const Text('Đăng ký'), // Hiển thị chữ "Đăng ký" trên nút.
-        )
+        ),
+        ElevatedButton(
+          onPressed: () {
+            fetchUserInfor();
+            print(
+                'đây là userinfor: $userInforList'); // Gọi hàm đăng ký khi nút được bấm.
+          },
+          child: const Text(
+              'Thông tin tài khoảng'), // Hiển thị chữ "Đăng ký" trên nút.
+        ),
+        ElevatedButton(
+          onPressed: () {
+            getOTP(); // Gọi hàm đăng ký khi nút được bấm.
+          },
+          child:
+              const Text('quên mật khẩu'), // Hiển thị chữ "Đăng ký" trên nút.
+        ),
+        ElevatedButton(
+          onPressed: () {
+            getResetPassword(); // Gọi hàm đăng ký khi nút được bấm.
+          },
+          child:
+              const Text('Reset mật khẩu'), // Hiển thị chữ "Đăng ký" trên nút.
+        ),
+        ElevatedButton(
+          onPressed: () {
+            getForgotPassword(); // Gọi hàm đăng ký khi nút được bấm.
+          },
+          child:
+              const Text('fogot password'), // Hiển thị chữ "Đăng ký" trên nút.
+        ),
+        ElevatedButton(
+          onPressed: () {
+            updateUserInfor(); // Gọi hàm đăng ký khi nút được bấm.
+          },
+          child: const Text(
+              'Cập nhật thông tin'), // Hiển thị chữ "Đăng ký" trên nút.
+        ),
+
+        // Hiển thị danh sách thông tin người dùng
+        if (userInforList.isNotEmpty)
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: userInforList.length,
+            itemBuilder: (context, index) {
+              final user = userInforList[index];
+              return Card(
+                child: ListTile(
+                  title: Text('Họ và tên: ${user.UserName}'),
+                  subtitle: Text('Ngày sinh: ${user.NgaySinh}'),
+                  // Hiển thị các thông tin khác ở đây tương tự
+                ),
+              );
+            },
+          ),
       ],
     );
   }

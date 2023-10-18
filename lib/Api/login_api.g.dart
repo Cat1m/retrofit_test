@@ -300,6 +300,207 @@ class _LoginApi implements LoginApi {
     return value;
   }
 
+  @override
+  Future<UserInforResponse> getListUserInfor(String usertoken) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': usertoken};
+    _headers.removeWhere((k, v) => v == null);
+    final Map<String, dynamic>? _data = null;
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<UserInforResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dkkb/CurrentUserInfo',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = UserInforResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<OtpResponse> getOTP(
+    String phonenumber,
+    String usertoken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': usertoken};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {'phonenumber': phonenumber};
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<OtpResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dkkb/GetOTP',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = OtpResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UpdateUserResponse> updateUserInfor(
+    String username,
+    String hinhanh,
+    String hoten,
+    String ngaysinh,
+    String gioitinh,
+    String maquocgia,
+    String matinh,
+    String mahuyen,
+    String maphuongxa,
+    String sonha,
+    String quoctich,
+    String hochieu,
+    String mathebhyt,
+    String hinhbhyt,
+    String madantoc,
+    String status,
+    String usertoken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': usertoken};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {
+      'Username': username,
+      'HinhAnh': hinhanh,
+      'HoTen': hoten,
+      'NgaySinh': ngaysinh,
+      'GioiTinh': gioitinh,
+      'MaQuocGia': maquocgia,
+      'MaTinh': matinh,
+      'MaHuyen': mahuyen,
+      'MaPhuongXa': maphuongxa,
+      'SoNha': sonha,
+      'QuocTich': quoctich,
+      'HoChieu': hochieu,
+      'MaTheBhyt': mathebhyt,
+      'HinhBhyt': hinhbhyt,
+      'MaDanToc': madantoc,
+      'Status': status,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<UpdateUserResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dkkb/UpdateDKKBAccount',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = UpdateUserResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ResetPasswordResponse> getResetPassword(
+    String username,
+    String oldpassword,
+    String newpassword,
+    String usertoken,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': usertoken};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {
+      'Username': username,
+      'OldPassword': oldpassword,
+      'NewPassword': newpassword,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ResetPasswordResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dkkb/ResetPassword',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = ResetPasswordResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ForgotPasswordResponse> getForgotPassword(
+    String username,
+    String newpassword,
+    String otp,
+    String token,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {
+      'Username': username,
+      'NewPassword': newpassword,
+      'Otp': otp,
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ForgotPasswordResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dkkb/ResetForgotPassword',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = ForgotPasswordResponse.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||
