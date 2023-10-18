@@ -306,7 +306,7 @@ class _LoginApi implements LoginApi {
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{r'token': usertoken};
     _headers.removeWhere((k, v) => v == null);
-    final Map<String, dynamic>? _data = null;
+    const Map<String, dynamic>? _data = null;
     final _result = await _dio
         .fetch<Map<String, dynamic>>(_setStreamType<UserInforResponse>(Options(
       method: 'POST',

@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:retrofit_test/Model/dantoc_response.dart/data_dantoc.dart';
 
-import 'package:retrofit_test/Model/phuongxa_response.dart/data_phuongxa.dart';
-
 part 'dantoc_response.g.dart';
 
 @JsonSerializable()

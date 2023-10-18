@@ -44,6 +44,25 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchData();
   }
 
+  void handleApiError(dynamic error) {
+    print("Lỗi khi tải dữ liệu: $error");
+    if (error is ApiError) {
+      // Xử lý lỗi API theo cách bạn muốn ở đây
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi API: ${error.message}'),
+        ),
+      );
+    } else {
+      // Xử lý lỗi khác
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Lỗi: $error'),
+        ),
+      );
+    }
+  }
+
   Future<void> fetchData() async {
     final apiProvider = getApiProvider(context);
 
@@ -79,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
       await fetchPhuongXaData();
       await fetchDanTocData();
     } catch (error) {
-      print('Lỗi khi tải dữ liệu: $error');
+      handleApiError(error);
     }
   }
 
@@ -97,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu tỉnh thành: $error');
+      handleApiError(error);
     }
   }
 
@@ -114,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu quận huyện: $error');
+      handleApiError(error);
     }
   }
 
@@ -131,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu phường xã: $error');
+      handleApiError(error);
     }
   }
 
@@ -148,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
         dataLoaded = true;
       });
     } catch (error) {
-      print('Lỗi khi tải dữ liệu dân tộc: $error');
+      handleApiError(error);
     }
   }
 
@@ -158,26 +177,16 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final otpResponse = await apiProvider.getOTP(userToken!);
       if (otpResponse.status == "Success") {
-        final message = otpResponse.message;
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message!),
-          ),
-        );
+        showApiMessage(context, otpResponse.message!);
       } else {
-        final errorMessage = otpResponse.message;
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage!),
-          ),
-        );
+        showApiMessage(context, otpResponse.message!);
       }
 
       setState(() {});
     } catch (error) {
-      print('Lỗi khi xử lý OTP: $error');
+      handleApiError(error);
     }
   }
 
@@ -192,24 +201,14 @@ class _HomeScreenState extends State<HomeScreen> {
         userToken!,
       );
       if (resetPassword.status == "Success") {
-        final message = resetPassword.message;
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message!),
-          ),
-        );
+        showApiMessage(context, resetPassword.message!);
       } else {
-        final errorMessage = resetPassword.message;
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage!),
-          ),
-        );
+        showApiMessage(context, resetPassword.message!);
       }
     } catch (error) {
-      print('Lỗi khi tải dữ liệu dân tộc: $error');
+      handleApiError(error);
     }
   }
 
@@ -224,24 +223,14 @@ class _HomeScreenState extends State<HomeScreen> {
         ApiKeyGenerator.getAPIKey(),
       );
       if (forgotPassword.status == "Success") {
-        final message = forgotPassword.message;
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message!),
-          ),
-        );
+        showApiMessage(context, forgotPassword.message!);
       } else {
-        final errorMessage = forgotPassword.message;
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage!),
-          ),
-        );
+        showApiMessage(context, forgotPassword.message!);
       }
     } catch (error) {
-      print('Lỗi khi tải dữ liệu dân tộc: $error');
+      handleApiError(error);
     }
   }
 
@@ -271,22 +260,14 @@ class _HomeScreenState extends State<HomeScreen> {
       print(registerResponse.toJson()); // In ra toàn bộ response để xem lỗi.
 
       if (registerResponse.status == "Success") {
-        final message = registerResponse.message;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message!),
-          ),
-        );
+        // ignore: use_build_context_synchronously
+        showApiMessage(context, registerResponse.message!);
       } else {
-        final errorMessage = registerResponse.message;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi đăng ký: $errorMessage'),
-          ),
-        );
+        // ignore: use_build_context_synchronously
+        showApiMessage(context, registerResponse.message!);
       }
     } catch (error) {
-      print('Lỗi khi đăng ký tài khoản: $error');
+      handleApiError(error);
     }
   }
 
@@ -302,7 +283,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
       print('đây là trả về từ call api userinfo $userInforResponse');
     } catch (error) {
-      print('Lỗi khi tải dữ liệu thông tin tài khoảng: $error');
+      handleApiError(error);
     }
   }
 
@@ -312,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final updateUserInfor = await apiProvide.updateUserInfor(
-          '841234567',
+          '84123456',
           '...',
           'Lê Minh Chiến',
           '06/12/1997',
@@ -332,22 +313,14 @@ class _HomeScreenState extends State<HomeScreen> {
       print(updateUserInfor.toJson()); // In ra toàn bộ response để xem lỗi.
 
       if (updateUserInfor.status == "OK") {
-        final message = updateUserInfor.message;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message!),
-          ),
-        );
+        // ignore: use_build_context_synchronously
+        showApiMessage(context, updateUserInfor.message!);
       } else {
-        final errorMessage = updateUserInfor.message;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Lỗi cập nhật thông tin: $errorMessage'),
-          ),
-        );
+        // ignore: use_build_context_synchronously
+        showApiMessage(context, updateUserInfor.message!);
       }
     } catch (error) {
-      print('Lỗi khi cập nhật tài khoảng: $error');
+      handleApiError(error);
     }
   }
 
@@ -562,6 +535,20 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void showApiMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+              color: Colors.white), // Đặt màu chữ thành màu trắng
+        ),
+        duration: const Duration(milliseconds: 200),
+        backgroundColor: Colors.red, // Đặt màu nền thành màu đỏ
+      ),
+    );
+  }
+
   Widget buildConfirmationScreen() {
     return Scaffold(
       appBar: AppBar(
@@ -588,4 +575,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
 ApiProvider getApiProvider(BuildContext context) {
   return Provider.of<ApiProvider>(context, listen: false);
+}
+
+class ApiError {
+  final String message;
+
+  ApiError(this.message);
 }

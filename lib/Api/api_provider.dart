@@ -13,7 +13,6 @@ import 'package:retrofit_test/Model/register_response.dart/register_response.dar
 import 'package:retrofit_test/Model/reset_password_response.dart/reset_password_response.dart';
 import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 import 'package:retrofit_test/Model/update_user_response/update_user_response.dart';
-import 'package:retrofit_test/Model/userinfor_response.dart/data_userinfor.dart';
 import 'package:retrofit_test/Model/userinfor_response.dart/userinfor_response.dart';
 
 class ApiProvider with ChangeNotifier {
@@ -125,7 +124,7 @@ class ApiProvider with ChangeNotifier {
           token);
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi đăng ký: $e');
+      throw Exception('Lỗi khi đăng ký mới: $e');
     }
   }
 
@@ -189,7 +188,7 @@ class ApiProvider with ChangeNotifier {
           usertoken);
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi đăng ký: $e');
+      throw Exception('Lỗi khi cập nhật thông tin: $e');
     }
   }
 
@@ -204,7 +203,7 @@ class ApiProvider with ChangeNotifier {
       );
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi gửi otp: $e');
+      throw Exception('Lỗi khi đặt lại mật khẩu: $e');
     }
   }
 
