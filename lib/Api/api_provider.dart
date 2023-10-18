@@ -6,6 +6,7 @@ import 'package:retrofit_test/Model/dantoc_response.dart/dantoc_response.dart';
 import 'package:retrofit_test/Model/huyenthi_response.dart/huyenthi_response.dart';
 import 'package:retrofit_test/Model/phuongxa_response.dart/phuongxa_response.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/quocgia_response.dart';
+import 'package:retrofit_test/Model/register_response.dart/register_response.dart';
 import 'package:retrofit_test/Model/tinhthanh_response.dart/tinhthanh_response.dart';
 
 class ApiProvider with ChangeNotifier {
@@ -45,7 +46,7 @@ class ApiProvider with ChangeNotifier {
       final response = await loginApi.getListTinhThanh(ma, 'false', 'false');
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi lấy danh sách quốc gia: $e');
+      throw Exception('Lỗi khi lấy danh sách tỉnh thành: $e');
     }
   }
 
@@ -54,7 +55,7 @@ class ApiProvider with ChangeNotifier {
       final response = await loginApi.getListHuyenThi(ma, 'false', 'false');
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi lấy danh sách quốc gia: $e');
+      throw Exception('Lỗi khi lấy danh sách huyen thi: $e');
     }
   }
 
@@ -63,7 +64,7 @@ class ApiProvider with ChangeNotifier {
       final response = await loginApi.getListPhuongXa(ma, 'false', 'false');
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi lấy danh sách quốc gia: $e');
+      throw Exception('Lỗi khi lấy danh sách phuong xa: $e');
     }
   }
 
@@ -72,7 +73,52 @@ class ApiProvider with ChangeNotifier {
       final response = await loginApi.getListDanToc('false', 'false');
       return response;
     } catch (e) {
-      throw Exception('Lỗi khi lấy danh sách quốc gia: $e');
+      throw Exception('Lỗi khi lấy danh sách dan toc: $e');
+    }
+  }
+
+  Future<RegisterResponse> registerNewAccount(
+      String username,
+      String password,
+      String hinhanh,
+      String hoten,
+      String ngaysinh,
+      String gioitinh,
+      String maquocgia,
+      String matinh,
+      String mahuyen,
+      String maphuongxa,
+      String sonha,
+      String quoctich,
+      String hochieu,
+      String mathebhyt,
+      String hinhbhyt,
+      String madantoc,
+      String opt,
+      String token) async {
+    try {
+      final response = await loginApi.registerNewAccount(
+          username,
+          password,
+          hinhanh,
+          hoten,
+          ngaysinh,
+          gioitinh,
+          maquocgia,
+          matinh,
+          mahuyen,
+          maphuongxa,
+          sonha,
+          quoctich,
+          hochieu,
+          mathebhyt,
+          hinhbhyt,
+          madantoc,
+          opt,
+          token);
+      return response;
+    } catch (e) {
+      throw Exception('Lỗi khi đăng ký: $e');
     }
   }
 }

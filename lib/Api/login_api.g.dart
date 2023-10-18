@@ -234,6 +234,72 @@ class _LoginApi implements LoginApi {
     return value;
   }
 
+  @override
+  Future<RegisterResponse> registerNewAccount(
+    String username,
+    String password,
+    String hinhanh,
+    String hoten,
+    String ngaysinh,
+    String gioitinh,
+    String maquocgia,
+    String matinh,
+    String mahuyen,
+    String maphuongxa,
+    String sonha,
+    String quoctich,
+    String hochieu,
+    String mathebhyt,
+    String hinhbhyt,
+    String madantoc,
+    String otp,
+    String token,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'token': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {
+      'Username': username,
+      'Password': password,
+      'HinhAnh': hinhanh,
+      'HoTen': hoten,
+      'NgaySinh': ngaysinh,
+      'GioiTinh': gioitinh,
+      'MaQuocGia': maquocgia,
+      'MaTinh': matinh,
+      'MaHuyen': mahuyen,
+      'MaPhuongXa': maphuongxa,
+      'SoNha': sonha,
+      'QuocTich': quoctich,
+      'HoChieu': hochieu,
+      'MaTheBhyt': mathebhyt,
+      'HinhBhyt': hinhbhyt,
+      'MaDanToc': madantoc,
+      'OPT': otp,
+    };
+    final _result = await _dio
+        .fetch<Map<String, dynamic>>(_setStreamType<RegisterResponse>(Options(
+      method: 'POST',
+      headers: _headers,
+      extra: _extra,
+      contentType: 'application/x-www-form-urlencoded',
+    )
+            .compose(
+              _dio.options,
+              '/dkkb/RegisterDKKBAccount',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(
+                baseUrl: _combineBaseUrls(
+              _dio.options.baseUrl,
+              baseUrl,
+            ))));
+    final value = RegisterResponse.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

@@ -6,6 +6,7 @@ import 'package:retrofit_test/Model/dantoc_response.dart/data_dantoc.dart';
 import 'package:retrofit_test/Model/huyenthi_response.dart/data_huyenthi.dart';
 import 'package:retrofit_test/Model/phuongxa_response.dart/data_phuongxa.dart';
 import 'package:retrofit_test/Model/quocgia_response.dart/data_quocgia.dart';
+import 'package:retrofit_test/Model/register_response.dart/register_response.dart';
 import 'package:retrofit_test/Model/tinhthanh_response.dart/data_tinhthanh.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -149,6 +150,51 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<void> registerNewAccount() async {
+    final apiProvide = getApiProvider(context);
+
+    try {
+      final registerResponse = await apiProvide.registerNewAccount(
+          '0359509251',
+          'Chien1102',
+          '...',
+          'Lê Minh Chiến',
+          '06/12/1997',
+          '1',
+          '190',
+          '1',
+          '1',
+          '1',
+          '1',
+          '1',
+          '1',
+          '1',
+          '...',
+          '1',
+          '...',
+          ApiKeyGenerator.getAPIKey());
+      print(registerResponse.toJson()); // In ra toàn bộ response để xem lỗi.
+
+      if (registerResponse.status == "Success") {
+        final message = registerResponse.message;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+          ),
+        );
+      } else {
+        final errorMessage = registerResponse.message;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi đăng ký: $errorMessage'),
+          ),
+        );
+      }
+    } catch (error) {
+      print('Lỗi khi đăng ký tài khoản: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,6 +271,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     builder: (context) => buildConfirmationScreen()));
           },
           child: const Text('Kiểm tra lại thông tin'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            registerNewAccount(); // Gọi hàm đăng ký khi nút được bấm.
+          },
+          child: const Text('Đăng ký'), // Hiển thị chữ "Đăng ký" trên nút.
         )
       ],
     );
